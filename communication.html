@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width">
+	<title>App</title>
+	<style>
+	*, *:before, *:after { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
+	.nav-bar { list-style: none; }
+	.nav-bar .is-active { background: yellow; }
+	.nav-bar li { padding: 10px; }
+
+	.container {
+		margin: 20px;
+		border: 1px solid #999;
+	}
+
+	.panel {
+		padding: 20px;
+		background: lightblue;
+		display: none;
+	}
+
+	.panel.is-active {
+		display: block;
+	}
+
+	</style>
+</head>
+<body>
+
+	<div id="react-container" class="container"></div>
+
+	<script src="http://fb.me/react-with-addons-0.8.0.js"></script>
+	<script src="http://fb.me/JSXTransformer-0.8.0.js"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+	<script type="text/jsx">
+		/** @jsx React.DOM */
+		var NavBar = React.createClass({
+			handleClick: function(item, i) {
+				this.props.onClick.call(this, item, i);
+			},
+			render: function() {
+				return (
+					<ul className="nav-bar">
+						{this.props.items && this.props.items.map(function(item, i) {
+							var classes = i === this.props.activeIndex ? 'is-active' : '';
+							var clickHandler = this.handleClick.bind(this, item, i);
+							return <li className={classes} onClick={clickHandler}>{item}</li>;
+						}.bind(this))}
+					</ul>
+				);
+			}
+		});
+
+		var PanelSet = React.createClass({
+			render: function() {
+				return (
+					<div className="panel-set">
+						{this.props.items && this.props.items.map(function(item, i) {
+							var classes = React.addons.classSet({
+								'panel': true,
+								'is-active': i === this.props.activeIndex
+							});
+							return (
+								<div className={classes}>
+									You have selected {item}
+								</div>
+							);
+						}.bind(this))}
+					</div>
+				);
+			}
+		});
+
+		var TabsWithPanels = React.createClass({
+			getInitialState: function() {
+				return {
+					activeIndex: 0
+				};
+			},
+			goTo: function(item, i) {
+				this.setState({
+					activeIndex: i
+				});
+			},
+			render: function() {
+				return (
+					<div className="tabs-with-panels">
+						<NavBar items={this.props.items} activeIndex={this.state.activeIndex} onClick={this.goTo} />
+						<PanelSet items={this.props.items} activeIndex={this.state.activeIndex} />
+					</div>
+				);
+			}
+		});
+
+	</script>
+
+	<script type="text/jsx">
+		/** @jsx React.DOM */
+		var items = ['Item', 'Another item', 'Third item'];
+
+		React.renderComponent(<TabsWithPanels items={items} />, $('#react-container')[0]);
+
+	</script>
+
+</body>
+</html>

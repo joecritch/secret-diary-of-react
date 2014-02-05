@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width">
+	<title>App</title>
+	<style>
+	*, *:before, *:after { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
+	.nav-bar { list-style: none; }
+	.nav-bar .is-active { background: yellow; }
+	.nav-bar li { padding: 10px; }
+
+	.container {
+		margin: 20px;
+		border: 1px solid #999;
+	}
+
+	</style>
+</head>
+<body>
+
+	<div id="react-container" class="container"></div>
+	<!-- <div id="jquery-container" class="container"></div> -->
+
+	<script src="http://fb.me/react-with-addons-0.8.0.js"></script>
+	<script src="http://fb.me/JSXTransformer-0.8.0.js"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+	<script type="text/jsx">
+		/** @jsx React.DOM */
+		var NavBar = React.createClass({
+			getInitialState: function() {
+				return {
+					activeIndex: 0
+				};
+			},
+			goTo: function(item, i) {
+				this.setState({
+					activeIndex: i
+				});
+			},
+			render: function() {
+				return (
+					<ul className="nav-bar">
+						{this.props.items && this.props.items.map(function(item, i) {
+							var classes = i === this.state.activeIndex ? 'is-active' : '';
+							var clickHandler = this.goTo.bind(this, item, i);
+							return <li className={classes} onClick={clickHandler}>{item}</li>;
+						}.bind(this))}
+					</ul>
+				);
+			}
+		});
+	</script>
+
+	<script type="text/jsx">
+	$.fn.navBar = function(options) {
+		return this.each(function() {
+			var activeIndex = 0;
+			options = options || {};
+			var $ul = $('<ul class="nav-bar" />');
+			var liHTML = $.map(options.items, function(item) {
+				return '<li>' + item + '</li>'
+			}).join('');
+			var $lis = $(liHTML).appendTo($ul);
+			$ul.appendTo($(this));
+			$ul.on('click', 'li', goTo);
+			goTo();
+
+			function goTo(e) {
+				if(e) activeIndex = $(e.currentTarget).index();
+				$lis.removeClass('is-active');
+				$lis.eq(activeIndex).addClass('is-active');
+			}
+		});
+	};
+	</script>
+
+	<script type="text/jsx">
+		/** @jsx React.DOM */
+		var items = ['Item', 'Another item', 'Third item'];
+
+		React.renderComponent(<NavBar items={items} />, $('#react-container')[0]);
+
+		// $('#jquery-container').navBar({
+		// 	items: items
+		// });
+
+	</script>
+
+</body>
+</html>

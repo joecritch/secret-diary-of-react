@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width">
+  <title>App</title>
+  <style>
+  *, *:before, *:after { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; line-height: 1.5; }
+  .nav-bar { list-style: none; }
+  .nav-bar .is-active { background: yellow; }
+  .nav-bar li { padding: 10px; }
+
+  .container {
+    margin: 20px;
+    border: 1px solid #999;
+  }
+
+  .layout {
+    padding: 20px;
+    border: 1px solid #999;
+  }
+
+  .layout .header {
+    padding: 0 0 20px 0;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #000;
+  }
+
+  .layout .header,
+  .layout .body,
+  .layout .footer {
+    position: relative;
+  }
+
+  .layout .header:before,
+  .layout .body:before,
+  .layout .footer:before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    background: yellow;
+    color: #000;
+    font-size: 16px;
+    padding: 5px;
+    display: none;
+  }
+
+  .footer {
+    border-top: 1px solid #000;
+    margin-top: 20px;
+    padding: 20px 0 0 0;
+  }
+
+  .layout .header:hover::before,
+  .layout .body:hover::before,
+  .layout .footer:hover::before {
+    display: block;
+  }
+
+  .layout .header:before {
+    content: 'Header';
+  }
+
+  .layout .body:before {
+    content: 'Body';
+  }
+
+  .layout .footer:before {
+    content: 'Footer';
+  }
+
+  </style>
+</head>
+<body>
+
+  <div id="react-container" class="container"></div>
+
+  <script src="http://fb.me/react-with-addons-0.8.0.js"></script>
+  <script src="http://fb.me/JSXTransformer-0.8.0.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+  <script src="includes/with-slots.js"></script>
+
+  <script type="text/jsx">
+    /** @jsx React.DOM */
+    var Layout = React.createClass({
+      mixins: [WithSlots],
+      render: function() {
+        return (
+          <div className="layout">
+            <div className="header">
+              {this.props.slots.header}
+            </div>
+            <div className="body">
+              {this.props.children}
+            </div>
+            <div className="footer">
+              {this.props.slots.footer}
+            </div>
+          </div>
+        );
+      }
+    });
+
+    var App = React.createClass({
+      render: function() {
+        return (
+          <div className="app">
+            <Layout>
+              <h1 className="my-title" slot="header">My title</h1>
+              <div className="my-contents">
+                <p>We want anything to go here, and not be coupled to the layout component.</p>
+              </div>
+              <p className="my-footer" slot="footer">My footer.</p>
+            </Layout>
+          </div>
+        )
+      }
+    });
+
+  </script>
+
+  <script type="text/jsx">
+    /** @jsx React.DOM */
+    React.renderComponent(<App />, $('#react-container')[0]);
+  </script>
+
+</body>
+</html>
+
